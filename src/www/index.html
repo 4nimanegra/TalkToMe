@@ -1,0 +1,84 @@
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript" src="js/elizabot/elizadata.js"></script>
+<script type="text/javascript" src="js/elizabot/elizabot.js"></script>
+<script>
+
+var eliza = new ElizaBot();
+var phrase = "";
+
+document.addEventListener('deviceready',myprogram,false);
+
+function myprogram(){
+
+	window.plugins.speechRecognition.isRecognitionAvailable(speechReady,speechNotReady);
+
+}
+
+function newPhrase(user){
+
+	if(phrase == ""){
+
+		phrase = eliza.getInitial();
+
+	}else{
+
+		phrase = eliza.transform(user);
+
+	}
+
+
+	sayThis(phrase);
+
+}
+
+function listenMe(){
+
+	if(eliza.quit){
+
+		navigator.app.exitApp();
+
+	}
+
+	window.plugins.speechRecognition.startListening(listen,error);
+
+}
+
+function speechNotReady(){
+
+	sayThisSingle("Uh oh, speech recognition not ready!!!");
+
+}
+
+function speechReady(){
+
+	setTimeout(newPhrase,500);
+
+}
+
+function listen(list){
+
+	newPhrase(list[0]);
+
+
+
+}
+
+function error(){
+
+	sayThisSingle("An error has ocurr!!");
+
+}
+
+function sayThisSingle(mystring){
+
+	TTS.speak({text: mystring ,locale: 'en-US',rate: 0.75});
+
+}
+
+function sayThis(mystring){
+
+	TTS.speak({text: mystring ,locale: 'en-US',rate: 0.75},listenMe);
+
+}
+
+</script>
